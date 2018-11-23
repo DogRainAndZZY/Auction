@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namesapce的值是dao接口的全限定名 -->
+<mapper namespace="com.zzy.dao.RecordDao">
+
+	<resultMap type="com.zzy.entity.Auction_record" id="record">
+		<id column="id" property="id" />
+		<result column="auction_time" property="auction_time" />
+		<result column="auction_price" property="auction_price" />
+
+		<!-- collection 复杂类型集合 嵌套结果映射 可以引用自身，也可以引用其他 -->
+		<association property="user" javaType="com.zzy.entity.Auction_user">
+			<id column="u_id" property="user_id" />
+			<result column="user_name" property="user_name" />
+		</association>
+	</resultMap>
+
+	<select id="selectByAuc_id" resultMap="record">
+		select
+		r.*,user_name,u.user_id as u_id from auction_record r left join
+		auction_user u on r.user_id=u.user_id
+		where r.auction_id=#{auction_id} order by r.auction_price desc
+
+	</select>
+
+	<insert id="insert">
+		insert into auction_record values(seq_book.nextval,#{0},#{1},sysdate,#{2})
+	</insert>
+
+	<select id="getmaxPrice" resultType="Double">
+		select max(auction_price)
+		from auction_record where auction_id=#{auction_id}
+	</select>
+
+	<delete id="delete">
+		delete from auction_record where auction_id=#{id}
+	</delete>
+
+
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzy.dao.AuctionDao">
+
+	<select id="selectAll" resultType="com.zzy.entity.Auction">
+		select * from auction
+		<where>
+			<if test=" auction_name!=null and auction_name!=''">
+				auction_name like '%'||#{auction_name}||'%'
+			</if>
+			<if test=" auction_desc!=null and auction_desc!=''">
+				and auction_desc like '%'||#{auction_desc}||'%'
+			</if>
+			<if test=" auction_start_time!=null and auction_start_time!=''">
+				and auction_start_time
+				&gt;=to_date(substr(#{auction_start_time},1,10),'yyyy-MM-dd')
+			</if>
+			<if test=" auction_end_time!=null and auction_end_time!=''">
+				and auction_end_time
+				&lt;=to_date(substr(#{auction_end_time},1,10),'yyyy-MM-dd')
+			</if>
+			<if test="auction_start_price!=null and auction_start_price!=''">
+				and auction_start_price &gt;=#{auction_start_price}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectOne" resultType="com.zzy.entity.Auction">
+		select * from auction where
+		auction_id=#{id}
+	</select>
+
+	<delete id="delete">
+
+		delete from auction where auction_id=#{id}
+	</delete>
+
+	<insert id="insert">
+		insert into auction
+		values(seq_book.nextval,#{auction_name},#{auction_start_price},#{auction_upset},to_date(#{auction_start_time},'yyyy-mm-dd'),to_date(#{auction_end_time},'yyyy-mm-dd'),#{auction_pic},#{auction_desc})
+	</insert>
+
+	<update id="update">
+		update auction set
+		auction_name=#{auction_name},
+		auction_start_price=#{auction_start_price},
+		auction_upset=#{auction_upset},
+		auction_start_time=to_date(#{auction_start_time},'yyyy-mm-dd'),
+		auction_end_time=to_date(#{auction_end_time},'yyyy-mm-dd'),
+		auction_pic=#{auction_pic},
+		auction_desc=#{auction_desc}
+		where
+		auction_id=#{auction_id}
+	</update>
+
+</mapper>
